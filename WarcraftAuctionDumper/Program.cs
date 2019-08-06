@@ -18,7 +18,8 @@ namespace WowAucDumper
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
             LogManager.SetupLogger();
-            logger.Info("Warcraft Auction House Dumper {0}", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            logger.Info("Warcraft Auction House Dumper ver. {0}", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            logger.Info("Author Riketta. Feedback: rowneg@bk.ru / https://github.com/riketta");
 
             logger.Info("Parsing arguments");
             Arguments arguments = null;
