@@ -23,6 +23,11 @@ namespace VersaTrackerBot
             Disconnect();
         }
 
+        static string EscapeTable(string table)
+        {
+            return table.Replace("-", "");
+        }
+
         public static SQLiteConnection Connect()
         {
             try
@@ -45,6 +50,7 @@ namespace VersaTrackerBot
 
         public static long GetLastTimestamp(string table)
         {
+            table = EscapeTable(table);
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
             sqlite_cmd.CommandText = $"SELECT * FROM {table} ORDER BY timestamp DESC LIMIT 1;";
 
@@ -53,6 +59,7 @@ namespace VersaTrackerBot
 
         public static long GetRows(string table)
         {
+            table = EscapeTable(table);
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
             sqlite_cmd.CommandText = $"SELECT COUNT(*) FROM {table};";
 
@@ -77,6 +84,7 @@ namespace VersaTrackerBot
 
         public static List<Lot> GetLots(string realm, int item)
         {
+            realm = EscapeTable(realm);
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
             sqlite_cmd.CommandText = $"SELECT * FROM {realm} WHERE item = {item}";
 

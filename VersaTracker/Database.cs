@@ -45,8 +45,14 @@ namespace VersaTracker
             SQLiteConnection.ClearAllPools();
         }
 
+        static string EscapeTable(string table)
+        {
+            return table.Replace("-", "");
+        }
+
         public static void CreateTable(string realm)
         {
+            realm = EscapeTable(realm);
             string command = $@"CREATE TABLE IF NOT EXISTS {realm}
                                 (
                                     timestamp BIGINT,
@@ -69,6 +75,7 @@ namespace VersaTracker
 
         public static void InsertData(string realm, long timestamp, AuctionData.Auction lot)
         {
+            realm = EscapeTable(realm);
             //string values = $"{timestamp}, {lot.auc}, {lot.item}, \"{lot.owner}\", \"{lot.ownerRealm}\", {lot.bid}, {lot.buyout}, {lot.quantity}, \"{lot.timeLeft}\", {lot.rand}, {lot.seed}, {lot.context}, 0, 0, {lot.petSpeciesId}, {lot.petBreedId}, {lot.petLevel}, {lot.petQualityId}";
             string values = $"{timestamp}, {lot.auc}, {lot.item}, {lot.bid}, {lot.buyout}, {lot.quantity}, {lot.context}, {lot.petSpeciesId}, {lot.petBreedId}, {lot.petLevel}, {lot.petQualityId}";
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
@@ -78,6 +85,7 @@ namespace VersaTracker
 
         public static bool IsLotExists(string realm, AuctionData.Auction lot)
         {
+            realm = EscapeTable(realm);
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
             sqlite_cmd.CommandText = $"SELECT auc FROM {realm} WHERE auc = '{lot.auc}';";
 
