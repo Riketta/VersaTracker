@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommandLine;
 
-namespace WowAucDumper
+namespace VersaTracker
 {
     class Arguments
     {
@@ -18,7 +18,10 @@ namespace WowAucDumper
         [Option('r', "region", HelpText = "Region index", Required = true)]
         public string Region { get; set; }
 
-        [Option('l', "realms", HelpText = "Realm name list", Required = true)]
+        [Option('l', "realms", HelpText = "Realm name list (recomended to use slug style)", Required = true)]
         public IEnumerable<string> Realms { get; set; }
+
+        [Option('d', "desync", HelpText = "Desync threads after jobs started.")]
+        public bool Desync { get; set; }
     }
 }

@@ -9,7 +9,7 @@ using NLog.Config;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
 
-namespace WowAucDumper
+namespace VersaTracker
 {
     class LogManager
     {

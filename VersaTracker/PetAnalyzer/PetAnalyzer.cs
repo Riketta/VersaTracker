@@ -5,32 +5,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static WowAucDumper.AucTracker;
-
 using PetSpeciesId = System.Int32;
 
-namespace WowAucDumper
+namespace VersaTracker
 {
     class PetAnalyzer
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public class LotPrice
-        {
-            public long Bid = 0;
-            public long Buyout = 0;
-
-            public LotPrice(long bid, long buyout)
-            {
-                Bid = bid / 10000;
-                Buyout = buyout / 10000;
-            }
-        }
-
         string reports = "reports";
         List<AuctionData> database = new List<AuctionData>();
         List<AucTracker> trackers = new List<AucTracker>();
-
         public List<AucTracker> Trackers { get => trackers; }
 
         public PetAnalyzer(string petDatabasePath)
@@ -45,24 +30,24 @@ namespace WowAucDumper
             if (trackers.Find(t => t.Realm == tracker.Realm) == null)
             {
                 trackers.Add(tracker);
-                tracker.NewAuctionDataEvent += NewAuctionDataHandler;
+                tracker.AuctionNewDataEvent += AuctionNewDataHandler;
             }
             else logger.Warn("Realm already in tracking");
         }
 
         void AddData(AuctionData newData)
         {
-            var oldData = database.Find(data => data.Equals(newData));
+            var oldData = database.Find(data => data.GetRealmName() == newData.GetRealmName());
             if (oldData != null)
             {
-                logger.Debug("Removing old auction data for \"{0}\" realm", newData.realms[0]);
+                logger.Debug("Removing old auction data for \"{0}\" realm", newData.GetRealmName());
                 database.Remove(oldData);
             }
 
             database.Add(newData);
         }
 
-        void NewAuctionDataHandler(object sender, AuctionDataEventArgs e)
+        void AuctionNewDataHandler(object sender, AuctionDataEventArgs e)
         {
             string realms = "";
             foreach (var realm in e.auctionData.realms)
@@ -79,8 +64,8 @@ namespace WowAucDumper
             foreach (var realmAuctionData in database)
             {
                 var realmPets = realmAuctionData.auctions.ToList().FindAll(lot => lot.petLevel > 0);
-                pets[realmAuctionData.realms[0].slug] = realmPets;
-                logger.Debug("Found {0} pets on \"{1}\" realm", realmPets.Count, realmAuctionData.realms[0].slug);
+                pets[realmAuctionData.GetRealmName()] = realmPets;
+                logger.Debug("Found {0} pets on \"{1}\" realm", realmPets.Count, realmAuctionData.GetRealmName());
             }
 
             return pets;

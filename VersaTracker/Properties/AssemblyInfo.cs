@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WarcraftAuctionDumper")]
+[assembly: AssemblyTitle("VersaTracker")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("rowneg@bk.ru / github.com/riketta")]
-[assembly: AssemblyProduct("WarcraftAuctionDumper")]
-[assembly: AssemblyCopyright("Copyright © Riketta 2019")]
+[assembly: AssemblyProduct("VersaTracker")]
+[assembly: AssemblyCopyright("Copyright © Riketta")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

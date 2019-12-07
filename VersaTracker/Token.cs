@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WowAucDumper
+namespace VersaTracker
 {
     class Token
     {
@@ -71,6 +71,10 @@ namespace WowAucDumper
                     expires = DateTime.UtcNow.AddSeconds(token.expires_in - 60);
                 }
             }
+
+#if DEBUG
+            logger.Debug("[DEBUG] Access token: {0}", token.access_token);
+#endif
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WowAucDumper
+namespace VersaTracker
 {
     class WarcraftAPI
     {
@@ -28,7 +28,7 @@ namespace WowAucDumper
 
         string DownloadPage(string url)
         {
-            logger.Debug($"Downloading URL: {url.Replace(token.GetToken(), "{token}")}");
+            //logger.Debug($"Downloading URL: {url.Replace(token.GetToken(), "{token}")}");
             string data = "";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -55,7 +55,7 @@ namespace WowAucDumper
 
         public AuctionApiResponse AuctionApiRequest(string realm)
         {
-            logger.Debug($"{nameof(this.AuctionApiRequest)} request");
+            //logger.Debug($"{nameof(this.AuctionApiRequest)} request");
             string url = $"https://{region}.api.blizzard.com/wow/auction/data/{realm}?locale={locale}&access_token={token.GetToken()}";
             string data = DownloadPage(url);
             AuctionApiResponse response = JsonConvert.DeserializeObject<AuctionApiResponse>(data);

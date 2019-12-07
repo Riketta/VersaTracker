@@ -7,18 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.Statistics;
 
-namespace WowAucDumper
+namespace VersaTracker
 {
     class Program
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        static bool terminate = false;
 
         static void Main(string[] args)
         {
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
             LogManager.SetupLogger();
-            logger.Info("Warcraft Auction House Dumper ver. {0}", Assembly.GetEntryAssembly().GetName().Version.ToString());
+            logger.Info("VersaTracker ver. {0}", Assembly.GetEntryAssembly().GetName().Version.ToString());
             logger.Info("Author Riketta. Feedback: rowneg@bk.ru / https://github.com/riketta");
 
             logger.Info("Parsing arguments");
@@ -28,29 +29,53 @@ namespace WowAucDumper
             logger.Info("Creating new API instance");
             WarcraftAPI api = new WarcraftAPI(arguments.Region, arguments.ClientID, arguments.ClientSecret);
 
-            logger.Info("Creating battle pet analyzer");
-            PetAnalyzer analyzer = new PetAnalyzer("petdb.txt");
+            logger.Info("Creating auction data processor");
+            AucDataProcessor aucDataProcessor = new AucDataProcessor();
+
+            //logger.Info("Creating battle pet analyzer");
+            //PetAnalyzer analyzer = new PetAnalyzer("petdb.txt");
 
             logger.Info("Creating AH trackers for realms");
+            List<AucTracker> trackers = new List<AucTracker>();
             foreach (var realm in arguments.Realms.ToList())
             {
                 logger.Info($"Creating tracker for \"{realm}\"");
                 AucTracker tracker = new AucTracker(api, realm);
-                analyzer.AddTracker(tracker);
+                trackers.Add(tracker);
+                aucDataProcessor.AddTracker(tracker);
+                //analyzer.AddTracker(tracker);
                 tracker.Start();
             }
             logger.Info("All jobs started");
 
-            logger.Info("Main thread idle");
+            /*
             int[] petSpeciesIds = new int[] { 2718, 2081, 1532, 868, 2766, 338, 1387, 844 };
             while (true)
             {
                 Console.ReadLine();
                 PrintReport(petSpeciesIds, analyzer);
             }
+            */
 
+            Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e)
+            {
+                e.Cancel = true;
+                terminate = true;
+            };
+
+            logger.Info("Main thread idle");
+            while (!terminate)
+            {
+            }
+
+            logger.Info("Finishing jobs");
+            foreach (var tracker in trackers)
+                tracker.Stop();
+            Database.Disconnect();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             logger.Info("All jobs done");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         static void PrintReport(int[] petSpeciesId, PetAnalyzer analyzer)
