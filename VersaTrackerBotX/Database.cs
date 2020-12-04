@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VersaTrackerBot
+namespace VersaTrackerBotX
 {
     class Database
     {
@@ -15,7 +15,6 @@ namespace VersaTrackerBot
 
         static Database()
         {
-            connection = new SQLiteConnection("Data Source = database.db; Version = 3; Read Only = True;");
         }
 
         ~Database()
@@ -28,10 +27,11 @@ namespace VersaTrackerBot
             return table.Replace("-", "");
         }
 
-        public static SQLiteConnection Connect()
+        public static SQLiteConnection Connect(string database)
         {
             try
             {
+                connection = new SQLiteConnection($"Data Source = {database}; Version = 3; Read Only = True;");
                 connection.Open();
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace VersaTrackerBot
             return (long)sqlite_cmd.ExecuteScalar();
         }
 
-        public static long GetRows(string table)
+        public static long GetRowsCount(string table)
         {
             table = EscapeTable(table);
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
@@ -82,11 +82,20 @@ namespace VersaTrackerBot
             return realms;
         }
 
-        public static List<Lot> GetLots(string realm, int item)
+        public static List<Lot> GetAllLots(string realm, int item)
+        {
+            return GetLots(realm, item, 0, 0);
+        }
+
+        public static List<Lot> GetLots(string realm, int item, long upper, long lower) // [from; to)
         {
             realm = EscapeTable(realm);
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
-            sqlite_cmd.CommandText = $"SELECT * FROM {realm} WHERE item = {item}";
+            if (upper == 0 || lower == 0)
+                sqlite_cmd.CommandText = $"SELECT * FROM {realm} WHERE item = {item} AND buyout > 0 AND quantity > 0";
+            else
+                sqlite_cmd.CommandText = $"SELECT * FROM {realm} WHERE item = {item} AND buyout > 0 AND quantity > 0 AND timestamp > {lower} AND timestamp <= {upper}";
+            //logger.Debug(sqlite_cmd.CommandText);
 
             List<Lot> lots = new List<Lot>();
             SQLiteDataReader sqlite_datareader = sqlite_cmd.ExecuteReader();
@@ -99,8 +108,9 @@ namespace VersaTrackerBot
                     item = sqlite_datareader.GetInt32(2),
                     bid = sqlite_datareader.GetInt64(3),
                     buyout = sqlite_datareader.GetInt64(4),
-                    quantity = sqlite_datareader.GetInt32(5)
+                    quantity = sqlite_datareader.GetInt32(5),
                 };
+                lot.buyoutPerItem = (decimal)lot.buyout / lot.quantity;
 
                 lots.Add(lot);
             }

@@ -20,13 +20,13 @@ namespace VersaTracker
             Console.OutputEncoding = Encoding.UTF8;
             LogManager.SetupLogger();
             logger.Info("VersaTracker ver. {0}", Assembly.GetEntryAssembly().GetName().Version.ToString());
-            logger.Info("Author Riketta. Feedback: rowneg@bk.ru / https://github.com/riketta");
+            logger.Info("Author Riketta. Feedback: riketta@outlook.com / https://github.com/riketta");
 
             logger.Info("Parsing arguments");
             Arguments arguments = null;
             var result = Parser.Default.ParseArguments<Arguments>(args).WithParsed(opts => arguments = opts);
 
-            logger.Info("Creating new API instance");
+            logger.Info("Creating new Warcraft API instance");
             WarcraftAPI api = new WarcraftAPI(arguments.Region, arguments.ClientID, arguments.ClientSecret);
 
             logger.Info("Creating auction data processor");
@@ -43,19 +43,10 @@ namespace VersaTracker
                 AucTracker tracker = new AucTracker(api, realm);
                 trackers.Add(tracker);
                 aucDataProcessor.AddTracker(tracker);
-                //analyzer.AddTracker(tracker);
                 tracker.Start();
             }
             logger.Info("All jobs started");
 
-            /*
-            int[] petSpeciesIds = new int[] { 2718, 2081, 1532, 868, 2766, 338, 1387, 844 };
-            while (true)
-            {
-                Console.ReadLine();
-                PrintReport(petSpeciesIds, analyzer);
-            }
-            */
 
             Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e)
             {
@@ -64,9 +55,7 @@ namespace VersaTracker
             };
 
             logger.Info("Main thread idle");
-            while (!terminate)
-            {
-            }
+            while (!terminate) {  }
 
             logger.Info("Finishing jobs");
             foreach (var tracker in trackers)

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("VersaTracker")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("rowneg@bk.ru / github.com/riketta")]
+[assembly: AssemblyCompany("riketta@outlook.com & github.com/riketta")]
 [assembly: AssemblyProduct("VersaTracker")]
 [assembly: AssemblyCopyright("Copyright © Riketta")]
 [assembly: AssemblyTrademark("")]
