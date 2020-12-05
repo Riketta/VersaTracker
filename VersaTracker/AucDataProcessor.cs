@@ -10,39 +10,56 @@ namespace VersaTracker
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        List<AucTracker> trackers = new List<AucTracker>();
-        public List<AucTracker> Trackers { get => trackers; }
+        private Database db = null;
+        public List<AucTracker> Trackers { get; } = new List<AucTracker>();
 
-        public AucDataProcessor()
+        public AucDataProcessor(Database database)
         {
-            Database.Connect();
+            db = database;
+        }
+
+        public void Start()
+        {
+            db.Connect();
+
+            foreach (var tracker in Trackers) // TODO: add smart queue with autobalance threads
+                tracker.Start();
+        }
+
+        public void Stop()
+        {
+            foreach (var tracker in Trackers)
+                tracker.Stop();
+
+            db.Disconnect();
         }
 
         public void AddTracker(AucTracker tracker)
         {
-            logger.Info("Trying to add tracker of realm \"{0}\"", tracker.Realm);
-            if (trackers.Find(t => t.Realm == tracker.Realm) == null) // TODO: validate realm and crossrealms
+            logger.Info($"Trying to add tracker of realm \"{tracker.RealmSlug}\" ({tracker.RealmId})");
+            if (!Trackers.Exists(t => t.RealmId == tracker.RealmId))
             {
-                trackers.Add(tracker);
-                tracker.AuctionNewDataEvent += AuctionNewDataHandler;
-                Database.CreateTable(tracker.Realm);
+                Trackers.Add(tracker);
+                tracker.AuctionNewReportEvent += AuctionNewReportHandler;
+                db.CreateTable(tracker.RealmId);
             }
             else logger.Warn("Realm already in tracking");
         }
 
-        void AuctionNewDataHandler(object sender, AuctionDataEventArgs e)
+        void AuctionNewReportHandler(object sender, AuctionReportEventArgs e)
         {
+            var report = e.Report;
+            
             string realms = "";
-            foreach (var realm in e.auctionData.realms)
-                realms = realms + string.Format("\"{0}\" ", realm.slug);
+            foreach (var realm in ConnectedRealms.GetRealmSlugsById(report.realmId))
+                realms += realm + " ";
             realms = realms.Trim();
-            logger.Info("New data for realm(s) {0} received", realms);
 
-            logger.Info("Inserting new data into database for realm(s) {0}", realms);
+            logger.Info($"Inserting new data into database for realm(s) {realms}");
             DateTime starttime = DateTime.UtcNow;
-            foreach (var lot in e.auctionData.auctions)
-                Database.InsertData(e.auctionData.GetRealmName(), e.auctionData.timestamp, lot);
-            logger.Info("Insertion done for realm(s) {0} in {1}", realms, DateTime.UtcNow.Subtract(starttime));
+            foreach (var lot in report.auctions)
+                db.InsertReport(report.realmId, report.lastModified, lot);
+            logger.Info($"Insertion done for realm(s) {realms} in {DateTime.UtcNow.Subtract(starttime)}");
         }
     }
 }

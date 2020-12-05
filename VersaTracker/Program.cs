@@ -29,22 +29,24 @@ namespace VersaTracker
             logger.Info("Creating new Warcraft API instance");
             WarcraftAPI api = new WarcraftAPI(arguments.Region, arguments.ClientID, arguments.ClientSecret);
 
+            logger.Info("Updating connected realms data");
+            ConnectedRealms.Update(api);
+
             logger.Info("Creating auction data processor");
-            AucDataProcessor aucDataProcessor = new AucDataProcessor();
+            AucDataProcessor aucDataProcessor = new AucDataProcessor(new SQLiteDatabase()); // TODO: change database
 
             //logger.Info("Creating battle pet analyzer");
             //PetAnalyzer analyzer = new PetAnalyzer("petdb.txt");
 
             logger.Info("Creating AH trackers for realms");
-            List<AucTracker> trackers = new List<AucTracker>();
-            foreach (var realm in arguments.Realms.ToList())
+            foreach (var realmSlug in arguments.Realms.ToList())
             {
-                logger.Info($"Creating tracker for \"{realm}\"");
-                AucTracker tracker = new AucTracker(api, realm);
-                trackers.Add(tracker);
+                int realmId = ConnectedRealms.GetRealmIdBySlug(realmSlug);
+                logger.Info($"Creating tracker for \"{realmSlug}\" ({realmId})");
+                AucTracker tracker = new AucTracker(api, realmId, realmSlug);
                 aucDataProcessor.AddTracker(tracker);
-                tracker.Start();
             }
+            aucDataProcessor.Start();
             logger.Info("All jobs started");
 
 
@@ -58,42 +60,11 @@ namespace VersaTracker
             while (!terminate) {  }
 
             logger.Info("Finishing jobs");
-            foreach (var tracker in trackers)
-                tracker.Stop();
-            Database.Disconnect();
+            aucDataProcessor.Stop();
             GC.Collect();
             GC.WaitForPendingFinalizers();
             logger.Info("All jobs done");
             //Console.ReadLine();
-        }
-
-        static void PrintReport(int[] petSpeciesId, PetAnalyzer analyzer)
-        {
-            logger.Info("Requesting report for battle pets");
-            var pets = analyzer.Report();
-            logger.Info("====== Battle Pets ======");
-            foreach (int speciesId in petSpeciesId)
-            {
-                var petInfo = PetDatabase.DB.First(pet => pet.Value.SpeciesId == speciesId).Value;
-                logger.Info("[{0}] SpeciesId {1}; NpcId {2}", petInfo.Name, petInfo.SpeciesId, petInfo.NpcId);
-
-                foreach (var realm in pets[speciesId])
-                {
-                    if (realm.Value.Count > 0)
-                        logger.Info("\t[{0}] Amount: {1}; Avg: {2}; Med: {3}; Min: {4}", realm.Key, realm.Value.Count, 
-                            (long)realm.Value.Average(pet => pet.Buyout), (long)Statistics.Median(realm.Value.Select(pet => (double)pet.Buyout)), realm.Value.Min(pet => pet.Buyout));
-                    else
-                        logger.Info("\t[{0}] No such pet found", realm.Key);
-                }
-            }
-            logger.Info("=========================");
-        }
-
-        static void SaveReport(PetAnalyzer analyzer)
-        {
-            logger.Info("Trying to save report for battle pets");
-            string filename = analyzer.SavePetData();
-            logger.Info("Report saved as \"{0}\"", filename);
         }
     }
 }

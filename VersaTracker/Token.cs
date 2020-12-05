@@ -40,7 +40,7 @@ namespace VersaTracker
         
         public string GetToken()
         {
-            if (expires.Subtract(DateTime.UtcNow).TotalSeconds < 0)
+            if (expires.Subtract(DateTime.UtcNow).TotalSeconds <= 180)
             {
                 logger.Info("Token outdated");
                 RequestToken();
@@ -68,7 +68,7 @@ namespace VersaTracker
                     data.Wait();
 
                     token = JsonConvert.DeserializeObject<RawToken>(data.Result);
-                    expires = DateTime.UtcNow.AddSeconds(token.expires_in - 60);
+                    expires = DateTime.UtcNow.AddSeconds(token.expires_in);
                 }
             }
 
