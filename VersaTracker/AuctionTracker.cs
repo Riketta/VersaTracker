@@ -22,11 +22,11 @@ namespace VersaTracker
 
         private static int interval = 900 * 1000;
         Timer timer = null;
-        DateTime lastModified = DateTime.MinValue;
         WarcraftAPI api = null;
 
         public int RealmId { get; internal set; }
         public string RealmSlug { get; internal set; }
+        public DateTime LastModified { get; internal set; } = DateTime.MinValue;
 
         public delegate void AuctionReportEventHandler(object sender, AuctionReportEventArgs e);
         public event AuctionReportEventHandler AuctionNewReportEvent;
@@ -70,10 +70,10 @@ namespace VersaTracker
                 logger.Info($"Trying to request AH API for realm {ToString()}");
                 var report = api.AuctionApiRequest(RealmId);
 
-                if (report.lastModified > lastModified)
+                if (report.lastModified > LastModified)
                 {
                     logger.Info($"Available newer ({report.lastModified}) data report for {ToString()} realm with {report.auctions.Length} lot(s)");
-                    lastModified = report.lastModified;
+                    LastModified = report.lastModified;
 
                     AuctionNewReportEvent?.Invoke(this, new AuctionReportEventArgs(report));
 

@@ -42,26 +42,28 @@ namespace VersaTracker
             SQLiteConnection.ClearAllPools();
         }
 
-        public override void CreateTable(int realmId)
+        public override void PrepareDatabase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void CreateRealmTable(int realmId)
         {
             string sql = $@"CREATE TABLE IF NOT EXISTS ""{realmId}""
                                 (
                                     timestamp BIGINT,
-                                    lot_id BIGINT PRIMARY KEY,
+                                    lot_id BIGINT,
                                     item_id INT,
                                     time_left TEXT,
                                     quantity INT,
-                                    unit_price BIGINT,
-                                    buyout BIGINT,
-                                    bid BIGINT
+                                    unit_price BIGINT
                                 );";
-
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
             sqlite_cmd.CommandText = sql;
             sqlite_cmd.ExecuteNonQuery();
         }
 
-        public override void InsertReport(WarcraftAPI.AuctionApiResponse report)
+        public override void InsertRealmReport(WarcraftAPI.AuctionApiResponse report)
         {
             long timestamp = new DateTimeOffset(report.lastModified).ToUnixTimeSeconds();
             foreach (var lot in report.auctions)

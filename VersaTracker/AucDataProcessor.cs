@@ -24,7 +24,7 @@ namespace VersaTracker
 
             foreach (var tracker in Trackers) // TODO: add smart queue with autobalance threads
             {
-                db.CreateTable(tracker.RealmId);
+                db.CreateRealmTable(tracker.RealmId);
                 tracker.Start();
             }
         }
@@ -57,10 +57,10 @@ namespace VersaTracker
                 realms += $@"""{realm}"" ";
             realms = realms.Trim();
 
-            logger.Info($"Inserting new data into database for realm(s): {realms}");
+            logger.Info($"Inserting new data into database for realm(s): {realms} ({report.realmId})");
             DateTime starttime = DateTime.UtcNow;
-            db.InsertReport(report);
-            logger.Info($"Insertion done for realm(s) {realms} in {DateTime.UtcNow.Subtract(starttime)}");
+            db.InsertRealmReport(report);
+            logger.Info($"Insertion done for realm(s) {realms} ({report.realmId}) in {DateTime.UtcNow.Subtract(starttime)}");
         }
     }
 }
