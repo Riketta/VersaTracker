@@ -33,7 +33,7 @@ namespace VersaTracker
             ConnectedRealms.Update(api);
 
             logger.Info("Creating auction data processor");
-            AucDataProcessor aucDataProcessor = new AucDataProcessor(new SQLiteDatabase()); // TODO: change database
+            AucDataProcessor aucDataProcessor = new AucDataProcessor(new PostgreSqlDatabase("192.168.1.35", "postgres", "***REMOVED***", "versatracker")); // TODO: change database
 
             //logger.Info("Creating battle pet analyzer");
             //PetAnalyzer analyzer = new PetAnalyzer("petdb.txt");

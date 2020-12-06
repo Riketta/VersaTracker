@@ -13,7 +13,7 @@ namespace VersaTracker
         public abstract void Connect();
         public abstract void CreateTable(int realmId);
         public abstract void Disconnect();
-        public abstract void InsertReport(int realmId, DateTime lastModified, WarcraftAPI.AuctionApiResponse.Auction lot);
+        public abstract void InsertReport(WarcraftAPI.AuctionApiResponse report);
         
         internal string EscapeString(string text)
         {

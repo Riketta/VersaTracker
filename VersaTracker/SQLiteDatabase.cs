@@ -19,6 +19,7 @@ namespace VersaTracker
 
         ~SQLiteDatabase()
         {
+            Disconnect();
         }
 
         public override void Connect()
@@ -43,7 +44,7 @@ namespace VersaTracker
 
         public override void CreateTable(int realmId)
         {
-            string command = $@"CREATE TABLE IF NOT EXISTS {realmId}
+            string sql = $@"CREATE TABLE IF NOT EXISTS ""{realmId}""
                                 (
                                     timestamp BIGINT,
                                     lot_id BIGINT PRIMARY KEY,
@@ -52,20 +53,25 @@ namespace VersaTracker
                                     quantity INT,
                                     unit_price BIGINT,
                                     buyout BIGINT,
-                                    bid BIGINT,
+                                    bid BIGINT
                                 );";
 
             SQLiteCommand sqlite_cmd = connection.CreateCommand();
-            sqlite_cmd.CommandText = command;
+            sqlite_cmd.CommandText = sql;
             sqlite_cmd.ExecuteNonQuery();
         }
 
-        public override void InsertReport(int realmId, DateTime lastModified, WarcraftAPI.AuctionApiResponse.Auction lot)
+        public override void InsertReport(WarcraftAPI.AuctionApiResponse report)
         {
-            string values = $"{new DateTimeOffset(lastModified).ToUnixTimeSeconds()}, {lot.id}, {lot.item.id}, {lot.time_left}, {lot.quantity}, {lot.unit_price}, {lot.buyout}, {lot.bid}";
-            SQLiteCommand sqlite_cmd = connection.CreateCommand();
-            sqlite_cmd.CommandText = $@"INSERT OR IGNORE INTO {realmId} VALUES ({values});";
-            sqlite_cmd.ExecuteNonQuery();
+            long timestamp = new DateTimeOffset(report.lastModified).ToUnixTimeSeconds();
+            foreach (var lot in report.auctions)
+            {
+                string values = $@"{timestamp}, {lot.id}, {lot.item.id}, '{lot.time_left}', {lot.quantity}, {lot.unit_price}, {lot.buyout}, {lot.bid}";
+                string sql = $@"INSERT OR IGNORE INTO ""{report.realmId}"" VALUES ({values});";
+                SQLiteCommand sqlite_cmd = connection.CreateCommand();
+                sqlite_cmd.CommandText = sql;
+                sqlite_cmd.ExecuteNonQuery();
+            }
         }
     }
 }

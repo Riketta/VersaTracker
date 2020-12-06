@@ -23,7 +23,10 @@ namespace VersaTracker
             db.Connect();
 
             foreach (var tracker in Trackers) // TODO: add smart queue with autobalance threads
+            {
+                db.CreateTable(tracker.RealmId);
                 tracker.Start();
+            }
         }
 
         public void Stop()
@@ -41,24 +44,22 @@ namespace VersaTracker
             {
                 Trackers.Add(tracker);
                 tracker.AuctionNewReportEvent += AuctionNewReportHandler;
-                db.CreateTable(tracker.RealmId);
             }
             else logger.Warn("Realm already in tracking");
         }
 
         void AuctionNewReportHandler(object sender, AuctionReportEventArgs e)
         {
-            var report = e.Report;
+            WarcraftAPI.AuctionApiResponse report = e.Report;
             
             string realms = "";
             foreach (var realm in ConnectedRealms.GetRealmSlugsById(report.realmId))
-                realms += realm + " ";
+                realms += $@"""{realm}"" ";
             realms = realms.Trim();
 
-            logger.Info($"Inserting new data into database for realm(s) {realms}");
+            logger.Info($"Inserting new data into database for realm(s): {realms}");
             DateTime starttime = DateTime.UtcNow;
-            foreach (var lot in report.auctions)
-                db.InsertReport(report.realmId, report.lastModified, lot);
+            db.InsertReport(report);
             logger.Info($"Insertion done for realm(s) {realms} in {DateTime.UtcNow.Subtract(starttime)}");
         }
     }

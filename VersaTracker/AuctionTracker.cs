@@ -69,11 +69,10 @@ namespace VersaTracker
             {
                 logger.Info($"Trying to request AH API for realm {ToString()}");
                 var report = api.AuctionApiRequest(RealmId);
-                logger.Info($"Available {report.auctions.Length} report(s) for {ToString()}: ");
 
                 if (report.lastModified > lastModified)
                 {
-                    logger.Info($"Available newer (updated {report.lastModified}) data report for {ToString()} realm with {report.auctions.Length} lots");
+                    logger.Info($"Available newer ({report.lastModified}) data report for {ToString()} realm with {report.auctions.Length} lot(s)");
                     lastModified = report.lastModified;
 
                     AuctionNewReportEvent?.Invoke(this, new AuctionReportEventArgs(report));
