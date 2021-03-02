@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersaTracker", "VersaTracker\VersaTracker.csproj", "{7818F706-69C4-4501-A9FC-087566EADF0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersaTrackerUI", "VersaTrackerUI\VersaTrackerUI.csproj", "{657E72C6-411E-4A08-ADD1-74C6B5BCFF0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VersaTrackerBotX", "VersaTrackerBotX\VersaTrackerBotX.csproj", "{7E11894E-B74A-4410-A8BE-EA0B1A0E9A32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersaTrackerBotX", "VersaTrackerBotX\VersaTrackerBotX.csproj", "{7E11894E-B74A-4410-A8BE-EA0B1A0E9A32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VersaTrackerWeb", "VersaTrackerWeb\VersaTrackerWeb.csproj", "{AA7D9A4A-D658-4D01-88F5-F2E07930C805}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{7818F706-69C4-4501-A9FC-087566EADF0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7818F706-69C4-4501-A9FC-087566EADF0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7818F706-69C4-4501-A9FC-087566EADF0B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{657E72C6-411E-4A08-ADD1-74C6B5BCFF0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{657E72C6-411E-4A08-ADD1-74C6B5BCFF0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{657E72C6-411E-4A08-ADD1-74C6B5BCFF0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{657E72C6-411E-4A08-ADD1-74C6B5BCFF0D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7E11894E-B74A-4410-A8BE-EA0B1A0E9A32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7E11894E-B74A-4410-A8BE-EA0B1A0E9A32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E11894E-B74A-4410-A8BE-EA0B1A0E9A32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E11894E-B74A-4410-A8BE-EA0B1A0E9A32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA7D9A4A-D658-4D01-88F5-F2E07930C805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA7D9A4A-D658-4D01-88F5-F2E07930C805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA7D9A4A-D658-4D01-88F5-F2E07930C805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA7D9A4A-D658-4D01-88F5-F2E07930C805}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -124,7 +124,6 @@
     <Compile Include="Database.cs" />
     <Compile Include="PostgreSqlDatabase.cs" />
     <Compile Include="SQLiteDatabase.cs" />
-    <Compile Include="LotPrice.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="LogManager.cs" />
     <Compile Include="Program.cs" />
